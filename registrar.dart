@@ -1,29 +1,12 @@
-import 'package:cadastrosi2020/registrar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'menu.dart';
 
-void main() async {
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  //FirebaseFirestore.instance.collection("clientes").doc().set({"nomeCliente":"Funcionou curso SI","emailCliente":"teste@funcionou.com.br"});
-
-
-  runApp(MaterialApp(
-    home: Home(),
-    debugShowCheckedModeBanner: false,
-  ));
-}
-
-class Home extends StatefulWidget {
+class Registrar extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _RegistrarState createState() => _RegistrarState();
 }
 
-class _HomeState extends State<Home> {
+class _RegistrarState extends State<Registrar> {
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> scaffolfKey = GlobalKey<ScaffoldState>();
@@ -37,8 +20,8 @@ class _HomeState extends State<Home> {
       key: scaffolfKey,
 
       appBar: AppBar(
-        backgroundColor:  Colors.lightGreen,
-        title: Text("CRUD Firebase"),
+        backgroundColor:  Colors.redAccent,
+        title: Text("Registro de Usuário"),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(5),
@@ -53,8 +36,8 @@ class _HomeState extends State<Home> {
                     controller: usuarioEmail,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      icon: Icon(Icons.email,color: Colors.blue,),
-                      labelText: "E-Mail"
+                        icon: Icon(Icons.email,color: Colors.blue,),
+                        labelText: "E-Mail"
                     ),
                     validator: (valor) {
                       if (valor.isEmpty) {
@@ -83,37 +66,16 @@ class _HomeState extends State<Home> {
                     },
                   ),
                   RaisedButton(
-                    child: Text("Logar"),
+                    child: Text("Registrar"),
                     onPressed: () {
                       if (formKey.currentState.validate()) {
-                        logar();
+                        registrar();
                       }
-
                     },
                   )
 
                 ],
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                FlatButton(
-                  textColor: Colors.blue,
-                  child: Text("Esqueci minha Senha"),
-                  onPressed: (){},
-                ),
-                FlatButton(
-                  textColor: Colors.blue,
-                  child: Text("Registrar"),
-                  onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Registrar()),
-                    );
-                  },
-                ),
-              ],
             ),
 
           ],
@@ -122,21 +84,16 @@ class _HomeState extends State<Home> {
     );
   }
 
-
-  Future<void> logar() async {
-
-    loading();
-
+  Future<void> registrar() async {
     try {
       UserCredential usuario = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
+          .createUserWithEmailAndPassword(
           email: usuarioEmail.text,
           password: usuarioSenha.text);
+      usuario.credential;
+
       Navigator.pop(context); // fecha a janela do Loading
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Menu()),
-      );
+
     } catch (erro) {
       Navigator.pop(context); // fecha a janela do Loading
       SnackBar snackbar = SnackBar(
@@ -147,33 +104,6 @@ class _HomeState extends State<Home> {
 
     }
 
-  }
-
-  void loading() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Color(0),
-          child: new Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
-            padding: EdgeInsets.all(10),
-            height: 70,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                new CircularProgressIndicator(),
-                SizedBox(
-                  width: 30,
-                ),
-                new Text(" Verificando ..."),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
 }

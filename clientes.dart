@@ -1,3 +1,4 @@
+import 'package:cadastrosi2020/clientes_editar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +15,14 @@ class _ClientesState extends State<Clientes> {
       appBar: AppBar(
         title: Text("Cadastro de Clientes"),
         centerTitle: true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: (){
+          Navigator.push(
+              (context),
+              MaterialPageRoute(builder: (context) => ClientesEditar(null)));
+        },
       ),
       body: Column(
         children: <Widget>[
@@ -40,9 +49,11 @@ class _ClientesState extends State<Clientes> {
                           itemBuilder: (context, index) {
                             return Card( // Lista os produtos
                                 child: ListTile(
+                                  isThreeLine: true,
                                   //snapshot.data.documents[index].documentID.toString() - pega o ID
                                   title: Text(snapshot.data.documents[index].data()["nomeCliente"].toString(),style: TextStyle(fontSize: 20)),
-                                  subtitle: Text(snapshot.data.documents[index].data()["emailCliente"].toString(),style: TextStyle(fontSize: 20)),
+                                  subtitle: Text(snapshot.data.documents[index].data()["emailCliente"].toString()  ,style: TextStyle(fontSize: 20)),
+
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
@@ -50,14 +61,16 @@ class _ClientesState extends State<Clientes> {
                                         icon: Icon(Icons.edit),
                                         color: Colors.blueAccent,
                                         onPressed: () {
-                                          //Navigator.push(context, MaterialPageRoute(builder: (context) => ClientesEditar(snapshot.data.documents[index])));
+                                          Navigator.push(
+                                              (context),
+                                              MaterialPageRoute(builder: (context) => ClientesEditar(snapshot.data.documents[index])));
                                         },
                                       ),
                                       IconButton(
                                         icon: Icon(Icons.delete),
                                         color: Colors.redAccent,
                                         onPressed: () {
-                                         // confirmaExclusao(context, index, snapshot);
+                                          confirmaExclusao(index, snapshot);
                                         },
                                       ),
                                     ],
@@ -75,4 +88,35 @@ class _ClientesState extends State<Clientes> {
 
     );
   }
+  confirmaExclusao(index, snapshot) {
+    showDialog(
+        context: context,
+      builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Atenção !"),
+            content: Text("Confirme a exclusão de : \n"+snapshot.data.documents[index].data()["nomeCliente"]),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: (){
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Confirmar"),
+                onPressed: (){
+                  FirebaseFirestore.instance.collection('clientes')
+                      .doc(snapshot.data.documents[index].id.toString())
+                      .delete();
+                  Navigator.of(context).pop();
+                },
+              ),
+
+            ],
+
+          );
+      }
+    );
+  }
+
 }
