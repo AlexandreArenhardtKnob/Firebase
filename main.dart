@@ -1,3 +1,4 @@
+import 'package:cadastrosi2020/esqueci.dart';
 import 'package:cadastrosi2020/registrar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,7 +39,7 @@ class _HomeState extends State<Home> {
 
       appBar: AppBar(
         backgroundColor:  Colors.lightGreen,
-        title: Text("CRUD Firebase"),
+        title: Text("CRUD Firebase - SI"),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(5),
@@ -101,7 +102,12 @@ class _HomeState extends State<Home> {
                 FlatButton(
                   textColor: Colors.blue,
                   child: Text("Esqueci minha Senha"),
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Esqueci()),
+                    );
+                  },
                 ),
                 FlatButton(
                   textColor: Colors.blue,
@@ -113,6 +119,16 @@ class _HomeState extends State<Home> {
                     );
                   },
                 ),
+                RaisedButton(
+                  child: Text("Menu"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Menu()),
+                    );
+                  }
+                  ,
+                )
               ],
             ),
 
